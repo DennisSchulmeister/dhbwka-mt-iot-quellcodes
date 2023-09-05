@@ -379,11 +379,11 @@ class MainWindow:
         Widgets für die Fahrzeugdaten aktualisieren.
         """
         target_speed = int(self._vehicle_status.get("target_speed", 0) * 100)
-        self._target_speed_value.set(target_speed)
+        self._target_speed_value.set(abs(target_speed))
         self._target_speed_text.set("vorwärts" if target_speed >= 0 else "rückwärts")
 
         speed_total = int(self._vehicle_status.get("speed_total", 0) * 100)
-        self._speed_total_value.set(speed_total)
+        self._speed_total_value.set(abs(speed_total))
         self._speed_total_text.set("vorwärts" if speed_total >= 0 else "rückwärts")
 
         self._obstacle_pushback.set(self._vehicle_status.get("obstacle_pushback", 0))

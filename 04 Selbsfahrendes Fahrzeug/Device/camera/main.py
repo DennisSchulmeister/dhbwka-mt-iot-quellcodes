@@ -111,6 +111,7 @@ def main():
         "size": (640, 480),
     }
 
+    # FIXME: Kamerabild ist spiegelverkehrt (links/rechts vertauscht)
     picam2.configure(picam2.create_video_configuration(picam2_config, transform = Transform(vflip=True)))
     output = StreamingOutput()
     picam2.start_recording(JpegEncoder(), FileOutput(output))

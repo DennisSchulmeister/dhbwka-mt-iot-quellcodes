@@ -153,6 +153,9 @@ class RemoteConnection:
             time.sleep(self._timeout_s)
 
             # Statusanfragen und vom UI vorgemerkte Befehle an das Fahrzeug senden
+            # FIXME: Deutliche Verbesserung der Latenz, indem nur alle Sekunden eine Anfrage an das Fahrzeug gesendet wird.
+            #        Das Fahrzeug sendet daraufhin für die nächsten 15 Sekunden selbstständig einen periodischen Status.
+            #        Netzwerklatenzen fallen dadurch nur noch zur Hälfte ins Gewicht.
             remote_address = (self._remote_ip, self._remote_port)
 
             _sendto(remote_address, {"cmd": "vehicle_status"})
