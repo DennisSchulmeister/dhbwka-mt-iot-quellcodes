@@ -21,7 +21,7 @@ zählen vor allem:
  * Der eigentliche Quellcode je Programm in einem separaten Unterverzeichnis
  * Weitere Verzeichnisse können Dokumentationen, Build-Pipelines uvm. beinhalten
 
-Das Unterzeichnis mit dem eigentlichen Python-Quellcode wird manchmal `src`
+Das Unterverzeichnis mit dem eigentlichen Python-Quellcode wird manchmal `src`
 genannt. Öfters anzutreffen ist aber die Variante, bei der das Verzeichnis
 wie das zu erstellende Programm heißt (hier `myapp`) und durch eine Datei
 namens `__init__.py` als Python-Modul gekennzeichnet wurde. Denn dadurch
@@ -50,7 +50,7 @@ Typischerweise wird dieses Verzeichnis in der Datei `.gitignore` von der
 Versionierung mit Git ausgeschlossen, da es auf einem anderen Rechner
 sowieso neu erzeugt werden muss.
 
-Die zweite Zeite aktiviert das Environment in der aktuellen Konsolensitzung,
+Die zweite Zeile aktiviert das Environment in der aktuellen Konsolensitzung,
 damit die dritte Zeile die in der `requirements.txt` definierten Abhängigkeiten
 nicht systemweit sondern nur innerhalb des Environments installiert.
 
