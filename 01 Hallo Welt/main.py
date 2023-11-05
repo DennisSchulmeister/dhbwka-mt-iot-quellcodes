@@ -6,7 +6,7 @@ def main():
     while not name:
         name = input("Wie heißt du? ")
 
-    print(f"Hallo, {name}!")
+    print(f"Hallo {name}!")
 
 if __name__ == "__main__":
     try:
