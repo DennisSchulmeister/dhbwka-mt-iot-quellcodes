@@ -1,6 +1,8 @@
 def main():
     name = ""
 
+    print("\033c", end='')
+
     while not name:
         name = input("Wie heißt du? ")
 
