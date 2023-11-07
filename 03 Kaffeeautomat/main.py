@@ -13,7 +13,7 @@ def make_drink(drink: str):
     print()
     print("Zubereitung läuft", end="", flush=True)
 
-    for i in range(15):
+    for i in range(20):
         time.sleep(0.5)
         print(".", end="", flush=True)
 
