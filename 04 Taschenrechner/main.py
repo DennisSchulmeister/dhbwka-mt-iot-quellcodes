@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 def input_nr(prompt):
     """
     Benutzer auffordern, eine Zahl einzugeben. Wiederholt die Aufforderung, bis eine
