@@ -10,7 +10,7 @@ def main():
     person_list.append(("Karla Kolumna", "Rasende Reporterin", 2))
 
     karl = {
-        "name": "Karl",
+        "name": "Wärter Karl",
         "role": "Zoowärter",
         "n_voice_actors": 3,
     }
