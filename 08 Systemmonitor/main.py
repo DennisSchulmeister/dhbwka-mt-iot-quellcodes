@@ -20,7 +20,7 @@ def read_sensor_values():
         "memory": {
             "total":     memory_info[0],
             "available": memory_info[1],
-            "percent":   memory_info[2],
+            "percent":   memory_info[1] / memory_info[0],
         },
         "cpu": {
             "usage": psutil.cpu_percent(),

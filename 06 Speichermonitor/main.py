@@ -11,7 +11,7 @@ def main():
         print("\033c", end='')
         print(f"Hauptspeicher Gesamt...: {round(memory_info[0] / 1024 / 1024, 2)} MB")
         print(f"Verfügbarer Speicher...: {round(memory_info[1] / 1024 / 1024, 2)} MB")
-        print(f"Speicherauslastung.....: {round(memory_info[2], 2)} %")
+        print(f"Speicherauslastung.....: {round(memory_info[1] / memory_info[0] * 100, 2)} %")
         print()
         print("Strg+C drücken zum Beenden!", flush=True)
 
