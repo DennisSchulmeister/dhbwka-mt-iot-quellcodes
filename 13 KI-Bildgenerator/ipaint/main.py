@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 import json, os, webbrowser
 import rich
 
@@ -7,14 +5,14 @@ from openai import OpenAI
 from rich.prompt import Prompt
 
 ## Die folgenden Zeilen einkommentieren, um den Ablauf auf der Konsole zu tracen
-#import pysnooper
-#@pysnooper.snoop()
+# import snoop
+# @snoop
 def main():
     """
     Funktion mit der eigentlichen Programmlogik.
     """
     ## Die folgende Zeile einkommentieren, um das Programm in der Konsole zu debuggen
-    #import pudb; pu.db
+    # import pudb; pu.db
 
     # API-Key einlesen
     file_path = os.path.dirname(__file__)
