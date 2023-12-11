@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 """
 Minimalbeispiel für ein typisches Python-Projekt. Zeigt die typische
 Verzeichnisstruktur eines Python-Projekts und wie mit `python -m venv`
