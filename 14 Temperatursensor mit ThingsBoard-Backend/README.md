@@ -35,7 +35,7 @@ mit dem Raspberry Pi verbunden werden:
     * CCL → Raspberry Pi GPIO 3 (SCL1)
  * Buzzer:
     * S → Raspberry Pi GPIO 18
-    * + → Raspberry Pi 3.3V
-    * - → Rasbperry Pi GND
+    * \+ → Raspberry Pi 3.3V
+    * \- → Rasbperry Pi GND
 
 ![Hardwareaufbau](Hardware/hardwareaufbau_bb.png)
