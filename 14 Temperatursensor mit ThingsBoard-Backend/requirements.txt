@@ -1,0 +1,8 @@
+# Auslesen des BMP280 Umweltsensors
+adafruit-circuitpython-bmp280
+
+# Kommunikation mit dem ThingsBoard-Backend
+tb-mqtt-client
+
+# Einlesen von .env-Dateien
+python-dotenv
