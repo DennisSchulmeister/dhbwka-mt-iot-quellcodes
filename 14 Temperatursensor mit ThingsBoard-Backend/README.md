@@ -25,7 +25,7 @@ Hardwareaufbau
 --------------
 
 Der Hardwareaufbau besteht aus einem BMP280-Umweltsensor (Bauteil KY-052 im Sensor Kit)
-und einem Buzzer, der bei Alarm einen Ton erzeugt (Bauteil KY-012). Diese müssen wir folgt
+und einem Buzzer, der bei Alarm einen Ton erzeugt (Bauteil KY-012). Diese müssen wie folgt
 mit dem Raspberry Pi verbunden werden:
 
  * BMP280-Sensor:
