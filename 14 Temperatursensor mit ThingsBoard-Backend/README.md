@@ -10,7 +10,7 @@ realisiertes IoT-Backend sendet. ThingsBoard speichert die Daten als Zeitreihen 
 Datenbank, löst Alarm aus, wenn die Werte im kritischen Bereich liegen und visualisiert
 diese in einem Dashboard.
 
-Hinweise zur Nutung
+Hinweise zur Nutzung
 -------------------
 
 Für dieses Beispiel wurde ein eigener ThingsBoard-Server unter [https://thingsboard.zimolong.eu](https://thingsboard.zimolong.eu)
