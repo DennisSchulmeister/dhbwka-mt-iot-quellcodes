@@ -13,8 +13,8 @@
     "nodes": [
       {
         "additionalInfo": {
-          "layoutX": 824,
-          "layoutY": 156
+          "layoutX": 940,
+          "layoutY": 248
         },
         "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
         "name": "Save Timeseries",
@@ -27,8 +27,8 @@
       },
       {
         "additionalInfo": {
-          "layoutX": 825,
-          "layoutY": 52
+          "layoutX": 933,
+          "layoutY": 91
         },
         "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
         "name": "Save Client Attributes",
@@ -44,8 +44,8 @@
       },
       {
         "additionalInfo": {
-          "layoutX": 347,
-          "layoutY": 149
+          "layoutX": 463,
+          "layoutY": 241
         },
         "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
         "name": "Message Type Switch",
@@ -58,8 +58,8 @@
       },
       {
         "additionalInfo": {
-          "layoutX": 825,
-          "layoutY": 266
+          "layoutX": 941,
+          "layoutY": 358
         },
         "type": "org.thingsboard.rule.engine.action.TbLogNode",
         "name": "Log RPC from Device",
@@ -74,8 +74,8 @@
       },
       {
         "additionalInfo": {
-          "layoutX": 825,
-          "layoutY": 379
+          "layoutX": 941,
+          "layoutY": 471
         },
         "type": "org.thingsboard.rule.engine.action.TbLogNode",
         "name": "Log Other",
@@ -90,8 +90,8 @@
       },
       {
         "additionalInfo": {
-          "layoutX": 825,
-          "layoutY": 468
+          "layoutX": 941,
+          "layoutY": 560
         },
         "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
         "name": "RPC Call Request",
@@ -121,8 +121,8 @@
       {
         "additionalInfo": {
           "description": "",
-          "layoutX": 1142,
-          "layoutY": 156
+          "layoutX": 1228,
+          "layoutY": 246
         },
         "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
         "name": "Create and Clear Alarms",
@@ -131,6 +131,24 @@
         "configurationVersion": 0,
         "configuration": {
           "ruleChainId": "e9d15bc0-ba3c-11ee-8838-11d74fb13eea"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 936,
+          "layoutY": 156
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save shared attributes",
+        "debugMode": false,
+        "singletonMode": false,
+        "configurationVersion": 2,
+        "configuration": {
+          "scope": "SHARED_SCOPE",
+          "notifyDevice": true,
+          "sendAttributesUpdatedNotification": false,
+          "updateAttributesOnlyOnValueChange": false
         }
       }
     ],
@@ -147,11 +165,6 @@
       },
       {
         "fromIndex": 2,
-        "toIndex": 1,
-        "type": "Post attributes"
-      },
-      {
-        "fromIndex": 2,
         "toIndex": 3,
         "type": "RPC Request from Device"
       },
@@ -164,6 +177,11 @@
         "fromIndex": 2,
         "toIndex": 5,
         "type": "RPC Request to Device"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 8,
+        "type": "Post attributes"
       },
       {
         "fromIndex": 6,
