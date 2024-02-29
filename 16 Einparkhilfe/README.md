@@ -1,16 +1,24 @@
 Digital Ein- und Ausgänge
 =========================
 
-Dies ist eine Variante des Beispiels zur Ansteuerung digitaler Bausteine.
-Wir verwenden hier denselben Hardwareaufbau, jedoch wird die LED durch die
-zwei Buttons nicht ein- oder ausgeschaltet, sondern mit PWM in ihrer Helligkeit
-reguliert. Die beiden Buttons machen die LED je 10% heller oder dunkler.
+Dieses Beispiel zeigt einen etwas komplexeren Hardwareaufbau, bei dem wir eine
+typische Einparkhilfe, wie man sie vom Auto her kennt, nachbauen. Die Einparkhilfe
+wird durch einen elektrischen Kontakt (meist mit dem Rücklicht verbunden) aktiviert
+und nimmt daraufhin periodische Abstandsmessungen mit einem Ultraschallsensor vor.
+Das Ergebnis wird in ein auditorisches Feedback in Form von unterschiedlich lange
+und schnell andauernder Piepstöne eines Buzzers mitgeteilt.
+
+Dank gpiozero ist die Programmierung eigentlich ziemlich leicht, da für alle
+Bauteile fertige Klassen genutzt werden können. Lediglich das Ausrechnen der
+Häufigkeit und dauer des akkustischen Signals ist etwas umständlich. Das liegt
+aber an der Anforderung und nicht an der Hard- oder Software. :-)
 
 Hardwareaufbau
 --------------
 
-Der Hardwareaufbau besteht aus zwei Buttons und einer LED. Die LED muss über
-einen Vorwiderstand angeschlossen werden, sofern nicht das X40 Sensor Kit
-verwendet wird (dort ist auf dem LED-Modul bereits ein Widerstand aufgelötet).
+Der Hardwareaufbau besteht aus einem Button, der den eingelegten Rückwärtsgang simuliert,
+einem Buzzer und einem Ultraschall-Abstandssensor. Letzterer muss dabei über einen
+Level Shifter verbunden werden, da er mit 5V Pegel arbeitet, der Pi aber nur mit 3,3V.
+Davon abgesehen sollte der Aufbau relativ selbsterklärend sein.
 
 ![Hardwareaufbau](Hardware/Hardwareskizze_bb.png)

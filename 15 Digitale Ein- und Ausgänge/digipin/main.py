@@ -1,6 +1,6 @@
 """
 Beispiel zum Entprellen von Hardware-Buttons. Diese Beispiel verwendet zwei Buttons,
-von denen einer die LED ein- und der andere sie wieder ausschaltet. Wird kein Butto
+von denen einer die LED ein- und der andere sie wieder ausschaltet. Wird kein Button
 gedrückt, behält die LED ihren letzten Zustand.
 
 Hardwareaufbau:
