@@ -149,7 +149,7 @@ class MainWindow:
     def _create_row_frame(self, root, row, text="", dark=False):
         """
         Hilfsmethode zum Erzeugen eines Labels und Frames mit einer visuellen Zeile
-        im Hauptfenster. Das Laben befindet sich am linken Rand und hat einen dunklen
+        im Hauptfenster. Das Label befindet sich am linken Rand und hat einen dunklen
         Hintergrund. Der eigentliche Inhalt befindet sich rechts davon in einem Frame
         mit maximaler Breite und hellem Hintergrund.
 
