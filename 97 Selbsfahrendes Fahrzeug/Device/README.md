@@ -23,7 +23,7 @@ ausgetauscht werden. Die Klasse `DirectionServo` muss ggf. ebenfalls angepasst w
 
 Der Quellcode ist modular aufgebaut. Im Kern handelt es sich um die Klasse `vehicle`
 in der Datei `vehicle.py`, die das eigentliche Fahrzeug implementiert. Sie besitzt
-mehrere Instanzattribute wie `target_speed` oder `direction`, mit denen das Fahrzeug
+mehrere Instanz-Attribute wie `target_speed` oder `direction`, mit denen das Fahrzeug
 durch Zuweisung eines neuen Werts gesteuert werden kann. In ihrer Hauptschleife
 setzt die Klasse diese Werte in konkrete Anweisungen an die Hardware um. Geleitet
 wird sie dabei von einer variablen Anzahl von Sensor-Objekten, die ebenfalls in der

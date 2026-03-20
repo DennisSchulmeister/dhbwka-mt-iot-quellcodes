@@ -11,7 +11,7 @@ from carbot.sensors.base import SensorBase
 
 class UDPRemoteControl(SensorBase):
     """
-    Fernsteuerung des Fahrzeugs durch entfernte UDP-Clients. Startet einen Hintergrundthread,
+    Fernsteuerung des Fahrzeugs durch entfernte UDP-Clients. Startet einen Hintergrund-Thread,
     in dem ein UDP-Socket zum Empfangen von Steuerbefehlen geöffnet wird. Folgende Befehle
     werden dabei unterstützt:
 
@@ -123,6 +123,7 @@ class UDPRemoteControl(SensorBase):
         
         # UDP-Pakete über die Sockets empfangen und verarbeiten
         sockets_without_data = 0
+        status_listeners = {}
 
         while True:
             # FIXME: Prüfen
@@ -142,24 +143,35 @@ class UDPRemoteControl(SensorBase):
                         continue
 
                     if command["cmd"] == "vehicle_status":
-                        # Abfrage des Fahrzeugstatus direkt beantworten
-                        # FIXME: Prüfen
-                        # with self._status_lock:
-                        response = json.dumps({"cmd": "vehicle_status_response", "data": self._vehicle_status})
-                        socket_.sendto(response.encode(), address)
+                        # Abfrage des Fahrzeugstatus
+                        if not address in status_listeners:
+                            status_listeners[address] = {
+                                "vehicle_status_count": 0,
+                                "sensor_status_count":  0,
+                                "sound_status_count":   0,
+                            }
+
+                        status_listeners[address]["vehicle_status_count"] = command["count"]
                     elif command["cmd"] == "sensor_status":
-                        # Abfrage des Sensorstatus direkt beantworten
-                        # FIXME: Prüfen
-                        # with self._status_lock:
-                        response = json.dumps({"cmd": "sensor_status_response", "data": self._sensor_status})
-                        socket_.sendto(response.encode(), address)
+                        # Abfrage des Sensorstatus
+                        if not address in status_listeners:
+                            status_listeners[address] = {
+                                "vehicle_status_count": 0,
+                                "sensor_status_count":  0,
+                                "sound_status_count":   0,
+                            }
+
+                        status_listeners[address]["sensor_status_count"] = command["count"]
                     elif command["cmd"] == "sound_status":
-                        # Abfrage nach verfügbaren Soundfiles direkt beantworten
-                        # FIXME: Prüfen
-                        # with self._status_lock:
-                        sound_status = {"soundfiles": self._available_sounds, "playing": self._playing_sounds}
-                        response = json.dumps({"cmd": "sound_status_response", "data": sound_status})
-                        socket_.sendto(response.encode(), address)
+                        # Abfrage nach verfügbaren Soundfiles
+                        if not address in status_listeners:
+                            status_listeners[address] = {
+                                "vehicle_status_count": 0,
+                                "sensor_status_count":  0,
+                                "sound_status_count":   0,
+                            }
+                    
+                        status_listeners[address]["sound_status_count"] = command["count"]
                     else:
                         # Alle anderen Steuerbefehle im Fahrzeug-Thread bearbeiten
                         self._pending_commands.append(command)
@@ -173,6 +185,31 @@ class UDPRemoteControl(SensorBase):
                 except Exception as exc:
                     print(f"Fehler im Netzwerk-Thread: {exc}")
                     traceback.print_exc()
+                
+                for address in status_listeners:
+                    listener = status_listeners[address]
+
+                    if listener["vehicle_status_count"]:
+                        # FIXME: Prüfen
+                        # with self._status_lock:
+                        listener["vehicle_status_count"] -= 1
+                        response = json.dumps({"cmd": "vehicle_status_response", "data": self._vehicle_status, "remaining_count": listener["vehicle_status_count"]})
+                        socket_.sendto(response.encode(), address)
+                    
+                    if listener["sensor_status_count"]:
+                        # FIXME: Prüfen
+                        # with self._status_lock:
+                        listener["sensor_status_count"] -= 1
+                        response = json.dumps({"cmd": "sensor_status_response", "data": self._sensor_status, "remaining_count": listener["sensor_status_count"]})
+                        socket_.sendto(response.encode(), address)
+                    
+                    if listener["sound_status_count"]:
+                        # FIXME: Prüfen
+                        # with self._status_lock:
+                        listener["sound_status_count"] -= 1
+                        sound_status = {"soundfiles": self._available_sounds, "playing": self._playing_sounds}
+                        response = json.dumps({"cmd": "sound_status_response", "data": sound_status, "remaining_count": listener["sound_status_count"]})
+                        socket_.sendto(response.encode(), address)
 
     def update(self, vehicle):
         """

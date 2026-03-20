@@ -147,6 +147,10 @@ class RemoteConnection:
                 except Exception:
                     continue
 
+        request_vehicle_status = True
+        request_sensor_status  = True
+        request_sound_status   = True
+
         while self._connected:
             ## FIXME: Prüfen
             # Kleine Pause zur Entlastung der CPU
@@ -158,9 +162,17 @@ class RemoteConnection:
             #        Netzwerklatenzen fallen dadurch nur noch zur Hälfte ins Gewicht.
             remote_address = (self._remote_ip, self._remote_port)
 
-            _sendto(remote_address, {"cmd": "vehicle_status"})
-            _sendto(remote_address, {"cmd": "sensor_status"})
-            _sendto(remote_address, {"cmd": "sound_status"})
+            if request_vehicle_status:
+                request_vehicle_status = False
+                _sendto(remote_address, {"cmd": "vehicle_status", "duration_sec": "10"})
+            
+            if request_sensor_status:
+                request_sensor_status = False
+                _sendto(remote_address, {"cmd": "sensor_status", "duration_sec": "10"})
+
+            if request_sound_status:
+                request_sound_status = False
+                _sendto(remote_address, {"cmd": "sound_status", "duration_sec": "10"})
 
             while True:
                 try:
@@ -188,14 +200,23 @@ class RemoteConnection:
                         # Neue Fahrzeugparameter empfangen
                         if self.on_receive_vehicle_status:
                             self.on_receive_vehicle_status(command["data"])
+                        
+                        if not getattr(command, "remaining_count", 0):
+                            request_vehicle_status = True
                     elif command["cmd"] == "sensor_status_response":
                         # Neue Sensorinformationen empfangen
                         if self.on_receive_sensor_status:
                             self.on_receive_sensor_status(command["data"])
+
+                        if not getattr(command, "remaining_count", 0):
+                            request_sensor_status = True
                     elif command["cmd"] == "sound_status_response":
                         # Neuer Soundstatus empfangen
                         if self.on_receive_sound_status:
                             self.on_receive_sound_status(command["data"])
+                        
+                        if not getattr(command, "remaining_count", 0):
+                            request_sound_status = True
                 except OSError as err:
                     if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
                         continue

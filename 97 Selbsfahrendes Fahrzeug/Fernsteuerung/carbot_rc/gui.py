@@ -1,3 +1,4 @@
+import pygame
 import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
@@ -115,6 +116,7 @@ class MainWindow:
         vehicle_frame.columnconfigure(6, weight=1)
         self._control_canvas_size_px = 250
         self._control_marker_size_px = 9
+        self._mouse_dragging = False
 
         self._control_canvas = tk.Canvas(vehicle_frame)
         self._control_canvas.grid(row=0, column=6, rowspan=2, sticky=(N,E,S,W))
@@ -133,6 +135,14 @@ class MainWindow:
             (self._control_canvas_size_px / 2) + self._control_marker_size_px,
             fill="red", outline="black"
         )
+
+        # Gamepad / Joystick
+        self._gamepad = None
+        self._gamepad_deadzone = 0.12
+        self._gamepad_poll_ms = 30
+        self._init_gamepad()
+        self._root.after(self._gamepad_poll_ms, self._poll_gamepad)
+        self._root.protocol("WM_DELETE_WINDOW", self._on_close)
 
         # Dummy zum Ausfüllen des Fensters nach unten
         self._root.rowconfigure(4, weight=1)
@@ -167,6 +177,18 @@ class MainWindow:
         frame.grid(row=row, column=1, sticky=(N,E,S,W))
 
         return frame
+
+    # --------------------
+    # Öffentliche Methoden
+    # --------------------
+    def mainloop(self):
+        """
+        Blockierende Methode zur Ausführung der tkinter "Hauptschleife". Diese Methode
+        muss nach Erzeugung des Objekts aufgerufen werden, damit die Anwendung auf
+        Ereignisse reagieren kann. Die Methode wird erst beendet, wenn das Programm
+        beendet werden soll.
+        """
+        self._root.mainloop()
 
     # -----------------------
     # Verbindung zum Fahrzeug
@@ -405,31 +427,31 @@ class MainWindow:
         """
         if not self._connected:
             return
+
+        self._mouse_dragging = True
         
-        if event.x < 0:
-            event.x = 0
-        if event.x > self._control_canvas_size_px:
-            event.x = self._control_canvas_size_px
-
-        if event.y < 0:
-            event.y = 0
-        if event.y > self._control_canvas_size_px:
-            event.y = self._control_canvas_size_px
-
-        self._control_canvas.coords(
-            self._control_canvas_marker,
-            event.x - self._control_marker_size_px,
-            event.y - self._control_marker_size_px,
-            event.x + self._control_marker_size_px,
-            event.y + self._control_marker_size_px,
-        )
+        x = max(0, min(self._control_canvas_size_px, event.x))
+        y = max(0, min(self._control_canvas_size_px, event.y))
 
         target_speed = -1.0 * (event.y - self._control_canvas_size_px / 2) / (self._control_canvas_size_px / 2)
         direction = (event.x - self._control_canvas_size_px / 2) / (self._control_canvas_size_px / 2)
+        
+        self._set_control_position(target_speed, direction)
+    
+    def _set_control_position(self, target_speed, direction):
+        """
+        Neue Geschwindigkeit und Richtung anzeigen und ans Fahrzeug schicken.
+        """
+        half = self._control_canvas_size_px / 2
+        m = self._control_marker_size_px
+        x = (direction + 1.0) * half
+        y = (-target_speed + 1.0) * half
+
+        self._control_canvas.coords(self._control_canvas_marker, x-m, y-m, x+m, y+m)
 
         self._connection.send_set_attribute("target_speed", target_speed)
         self._connection.send_set_attribute("direction", direction)
-    
+
     def _on_control_canvas_release(self, event):
         """
         Fahrzeug stoppen, wenn die Maus losgelassen wird.
@@ -437,25 +459,48 @@ class MainWindow:
         if not self._connected:
             return
         
-        self._control_canvas.coords(
-            self._control_canvas_marker,
-            (self._control_canvas_size_px / 2) - self._control_marker_size_px,
-            (self._control_canvas_size_px / 2) - self._control_marker_size_px,
-            (self._control_canvas_size_px / 2) + self._control_marker_size_px,
-            (self._control_canvas_size_px / 2) + self._control_marker_size_px,
-        )
+        self._mouse_dragging = False
+        self._set_control_position(0.0, 0.0)
 
-        self._connection.send_set_attribute("target_speed", 0.0)
-        self._connection.send_set_attribute("direction", 0.0)
+    # ------------------
+    # Gamepad / Joystick
+    # ------------------
+    def _init_gamepad(self):
+        """
+        Gamepad / Joystick initialisieren. Zuerst wird versucht, einen Controller
+        über die pygame GameController-API zu finden (besseres Achsen-Mapping für
+        moderne Gamepads). Falls kein Controller gefunden wird, wird auf die einfache
+        Joystick-API zurückgefallen.
+        """
+        pygame.init()
+        pygame.joystick.init()
 
-    # --------------------
-    # Öffentliche Methoden
-    # --------------------
-    def mainloop(self):
+        if pygame.joystick.get_count() > 0:
+            self._gamepad = pygame.joystick.Joystick(0)
+            self._gamepad.init()
+            print("Gamepad/Joystick verbunden:", self._gamepad.get_name())
+        else:
+            print("Kein Gamepad/Joystick erkannt")
+
+    def _poll_gamepad(self):
         """
-        Blockierende Methode zur Ausführung der tkinter "Hauptschleife". Diese Methode
-        muss nach Erzeugung des Objekts aufgerufen werden, damit die Anwendung auf
-        Ereignisse reagieren kann. Die Methode wird erst beendet, wenn das Programm
-        beendet werden soll.
+        Gamepad / Joystick abfragen und Fahrzeug damit steuern.
         """
-        self._root.mainloop()
+        if self._gamepad is not None and self._connected and not self._mouse_dragging:
+            pygame.event.pump()
+
+            raw_direction = self._gamepad.get_axis(0)
+            raw_speed     = self._gamepad.get_axis(1)
+            direction     = 0.0 if abs(raw_direction) < self._gamepad_deadzone else raw_direction
+            target_speed  = 0.0 if abs(raw_speed)     < self._gamepad_deadzone else -raw_speed
+
+            self._set_control_position(target_speed, direction)
+
+        self._root.after(self._gamepad_poll_ms, self._poll_gamepad)
+
+    def _on_close(self):
+        """
+        Pygame beenden und Fenster schließen.
+        """
+        pygame.quit()
+        self._root.destroy()
