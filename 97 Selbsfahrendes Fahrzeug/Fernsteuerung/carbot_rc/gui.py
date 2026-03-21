@@ -42,6 +42,7 @@ class MainWindow:
 
         # Audiowiedergabe
         self._sound_frame = self._create_row_frame(self._root, row=2, text="Audiowiedergabe")
+        self._sound_files     = []
         self._sound_widgets   = {}
         self._sound_variables = {}
         self._sound_status    = {}
@@ -322,6 +323,8 @@ class MainWindow:
             soundfiles.sort()
         else:
             soundfiles = []
+        
+        self.sound_files = soundfiles
 
         rebuild_widgets = False
         if not soundfiles:
@@ -381,6 +384,19 @@ class MainWindow:
         for soundfile in self._sound_widgets:
             variable = self._sound_variables[soundfile]
             variable.set(1 if soundfile in playing else 0)
+
+    def _set_soundfile_checked(self, soundfile, checked):
+        """
+        Manuelles Auslösen eines Soundfile Toggle-Widgets, wodurch sowohl das UI korrekt gezeichnet,
+        als auch sein Callback ausgeführt wird, um das Soundfile abzuspielen. Diese Methode brauchen
+        wir, um mit den Joystick/Gamepad-Buttons Sounds abspielen zu können.
+        """
+        var = self._sound_variables[soundfile]
+        btn = self._sound_widgets[soundfile]
+
+        desired = 1 if checked else 0
+        if var.get() != desired:
+            btn.invoke()  # toggles + calls command callback
 
     # -----------------
     # Fahrzeugparameter
@@ -449,7 +465,7 @@ class MainWindow:
 
         self._control_canvas.coords(self._control_canvas_marker, x-m, y-m, x+m, y+m)
 
-        self._connection.send_set_attribute("target_speed", target_speed)
+        self._connection.send_set_attribute("target_speed", -target_speed)
         self._connection.send_set_attribute("direction", direction)
 
     def _on_control_canvas_release(self, event):
@@ -489,12 +505,31 @@ class MainWindow:
         if self._gamepad is not None and self._connected and not self._mouse_dragging:
             pygame.event.pump()
 
+            # Richtung und Geschwindigkeit
             raw_direction = self._gamepad.get_axis(0)
             raw_speed     = self._gamepad.get_axis(1)
             direction     = 0.0 if abs(raw_direction) < self._gamepad_deadzone else raw_direction
             target_speed  = 0.0 if abs(raw_speed)     < self._gamepad_deadzone else -raw_speed
 
             self._set_control_position(target_speed, direction)
+
+            # Sounds wiedergeben mit den Buttons
+            soundfile = ""
+
+            try:
+                if self._gamepad.get_button(0):
+                    soundfile = self._sound_files[0]
+                if self._gamepad.get_button(1):
+                    soundfile = self._sound_files[1]
+                if self._gamepad.get_button(3):
+                    soundfile = self._sound_files[2]
+                if self._gamepad.get_button(4):
+                    soundfile = self._sound_files[3]
+            except IndexError:
+                pass
+
+            if soundfile:
+                self._set_soundfile_checked(soundfile, True)
 
         self._root.after(self._gamepad_poll_ms, self._poll_gamepad)
 

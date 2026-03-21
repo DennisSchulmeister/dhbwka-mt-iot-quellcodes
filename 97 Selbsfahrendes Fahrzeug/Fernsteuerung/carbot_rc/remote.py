@@ -164,15 +164,15 @@ class RemoteConnection:
 
             if request_vehicle_status:
                 request_vehicle_status = False
-                _sendto(remote_address, {"cmd": "vehicle_status", "duration_sec": "10"})
+                _sendto(remote_address, {"cmd": "vehicle_status", "count": 200})
             
             if request_sensor_status:
                 request_sensor_status = False
-                _sendto(remote_address, {"cmd": "sensor_status", "duration_sec": "10"})
+                _sendto(remote_address, {"cmd": "sensor_status", "count": 200})
 
             if request_sound_status:
                 request_sound_status = False
-                _sendto(remote_address, {"cmd": "sound_status", "duration_sec": "10"})
+                _sendto(remote_address, {"cmd": "sound_status", "count": 200})
 
             while True:
                 try:
